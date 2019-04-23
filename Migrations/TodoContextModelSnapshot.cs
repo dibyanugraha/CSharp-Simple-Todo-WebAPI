@@ -26,7 +26,9 @@ namespace TodoApi.Migrations
 
                     b.Property<bool>("IsComplete");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
