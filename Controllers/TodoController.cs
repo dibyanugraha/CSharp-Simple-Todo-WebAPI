@@ -7,7 +7,7 @@ using TodoApi.Models;
 
 namespace TodoApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/todos")]
     [ApiController]
     public class TodoController : ControllerBase
     {
@@ -26,6 +26,7 @@ namespace TodoApi.Controllers
            } 
         }
 
+        #region HTTP GET Todo
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Todo>>> GetTodos()
         {
@@ -44,5 +45,19 @@ namespace TodoApi.Controllers
 
             return todo;
         }
+        #endregion
+
+        #region HTTP POST Create Todo
+        [HttpPost]
+        public async Task<ActionResult<Todo>> PostTodo(Todo todo)
+        {
+            _context.Todos.Add(todo);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(
+                nameof(GetTodo), new { id = todo.Id }, todo
+            );
+        }
+        #endregion
     }
 }
