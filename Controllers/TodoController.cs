@@ -16,15 +16,15 @@ namespace TodoApi.Controllers
 
         public TodoController(TodoContext context)
         {
-           _context = context;
+            _context = context;
 
-           if (_context.Todos.Count() == 0)
-           {
-               _context.Todos.Add(
-                   new Todo { Name = "Item 1"}
-               );
-               _context.SaveChanges();
-           } 
+            if (_context.Todos.Count() == 0)
+            {
+                _context.Todos.Add(
+                    new Todo { Name = "Item 1" }
+                );
+                _context.SaveChanges();
+            }
         }
 
         #region HTTP GET Todo
@@ -73,24 +73,33 @@ namespace TodoApi.Controllers
             _context.Entry(todo).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();
-            
+
             return NoContent();
         }
         #endregion
 
         #region HTTP Patch Todo
-        // Todo: Finish patch implementation
         [HttpPatch("{id}")]
 
         public async Task<ActionResult<Todo>> PatchTodo(int id, [FromBody]JsonPatchDocument<Todo> todoPatch)
         {
-            var todo = await _context.Todos.FindAsync(id);
-            
-            todoPatch.ApplyTo(todo);
+            if (todoPatch != null)
+            {
+                var todo = await _context.Todos.FindAsync(id);
+                todoPatch.ApplyTo(todo, ModelState);
 
-            _context.Update(todo);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                await _context.SaveChangesAsync();
 
-            return todo;
+                return new ObjectResult(todo);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
         #endregion
 
