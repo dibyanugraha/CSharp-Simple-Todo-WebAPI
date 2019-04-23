@@ -7,7 +7,7 @@ using TodoApi.Models;
 
 namespace TodoApi.Controllers
 {
-    [Route("api/todos")]
+    [Route("api/todo")]
     [ApiController]
     public class TodoController : ControllerBase
     {
@@ -57,6 +57,23 @@ namespace TodoApi.Controllers
             return CreatedAtAction(
                 nameof(GetTodo), new { id = todo.Id }, todo
             );
+        }
+        #endregion
+
+        #region HTTP PUT Todo
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTodo(int id, Todo todo)
+        {
+            if (id == todo.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(todo).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+            
+            return NoContent();
         }
         #endregion
     }
