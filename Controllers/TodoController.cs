@@ -18,19 +18,16 @@ namespace TodoApi.Controllers
         {
             _context = context;
 
-            if (_context.Todos.Count() == 0)
-            {
-                _context.Todos.Add(
-                    new Todo { Name = "Item 1" }
-                );
-                _context.SaveChanges();
-            }
         }
 
         #region HTTP GET Todo
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Todo>>> GetTodos()
         {
+            if (_context.Todos.Count() == 0)
+            {
+                return NoContent();
+            }
             return await _context.Todos.ToListAsync();
         }
 
